@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="layoutGrid">
+        <header></header>
+        <main>
+           
+                <div class="navBar">   
+                    <div class="infoParaContainer">
+                        <h3>Choose Category</h3>
+                    </div>
+                    <div class="selectionBox">
+                       
+
+                    </div>
+                    <div class="applyButton">
+                       <h4>Apply</h4>
+                    </div>
+
+                </div>  
+
+                <div class="contentArea">
+                    <!--Dynamically created and appended content appended to contentArea as parent-->
+                </div>    
+          
+        </main>
+        <footer></footer>
+
+
+    </div>
+
+
+    <script src="{{ url_for('static', filename='index.js') }}"></script> 
+</body>
+
+</html>
