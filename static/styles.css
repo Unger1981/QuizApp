@@ -36,7 +36,7 @@ main {
   flex-direction: column;
   gap: 2vw;
   width: 50vw;
-  max-height: 65vh;
+  max-height: 52vh;
   overflow-y: auto; /* Changed to 'auto' for better usability */
 }
 
@@ -74,7 +74,9 @@ main {
   display: inline;
 }
 
-.applyButton {
+.applyButtonDisabled {
+  position: absolute;
+  top :70vh;
   align-content: center;
   border: rgba(20, 20, 20, 0.5) solid 1px;
   margin:5% 25% 5% 25%;
@@ -82,8 +84,12 @@ main {
   border-radius: 5%;
   width: 20vw;
   height: 10vw;
-  background-color: orange;
+  background-color: grey;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+.applyButtonEnabled {
+  background-color: orange;
+  box-shadow: rgba(0, 0, 0, 0.15) 2.95px 2.95px 2.6px;
 }
   
 .navBarActive {
