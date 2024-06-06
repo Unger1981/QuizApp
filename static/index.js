@@ -2,15 +2,16 @@
 
 
 // // Functional Variables
-// let contentArray =[1,2,3,4,5,6]
-let selectedCategory ="";
+
+let selectedCategoryID;
 let selectedDifficult ="";
 let allOptionSelected = false;
+let fetchedData;
 
 // //DOM Registration
 
-// 
-// let contentArea = document.querySelector(".contentArea")
+
+let contentArea = document.querySelector(".contentArea")
 let navBar = document.querySelector(".navBar");
 let selectionBox = document.querySelector(".selectionBox")
 let infoParaContainer = document.querySelector(".infoParaContainer")
@@ -19,14 +20,51 @@ let infoPara = document.querySelector(".infoPara")
 let applyButton = document.querySelector(".applyButtonDisabled")
 let difficultButtons = document.querySelectorAll(".difficultPara")
 
+// URL API TRIVIA CATEGORIES
+
+
+
+// Async Function fetching Categories from Backend (Backend request data from API )
+async function autoFetch(){
+let url = "http://127.0.0.1:5000/categories";
+const response = await fetch(url);
+fetchedData = await response.json();
+console.log(fetchedData)
+return fetchedData
+};
+
+// Async function appendOptions HOF using autofetch() for async await fetch of API DATA. Data used to generate Category Divs and append them to DOM with Event Listener
+
+async function appendOptions(){
+let receivedData = await autoFetch()
+receivedData.trivia_categories.forEach(element => {
+let categoryBox = document.createElement("div")
+categoryBox.classList.add("categoryBox")
+categoryBox.addEventListener("touchstart",handleTouchCategory)
+let categoryPara = document.createElement("p")
+categoryPara.classList.add("categoryPara")
+categoryPara.innerText = element.name
+categoryBox.append(categoryPara)
+selectionBox.appendChild(categoryBox)
+console.log(element)
+});
+   
+  
+  }
+
+appendOptions();
+
+
+
+
+
 
 //Added Event handler
 
 navBar.addEventListener("touchstart", handleTouchNav);
 applyButton.addEventListener("touchstart",handleApplyButton )
 difficultButtons.forEach(element => {
-  element.addEventListener("touchstart", handleDifficultButton)
-  
+element.addEventListener("touchstart", handleDifficultButton)
 });
 // //Event Functions
 
@@ -34,13 +72,16 @@ function handleTouchNav(event){
   console.log("touch")
   navBar.classList.toggle("navBarActive");
   navBar.removeEventListener("touchstart", handleTouchNav);
-  
 };
 
 function handleTouchCategory(event){
-  selectedCategory = event.target.innerText;
+  fetchedData.trivia_categories.forEach(element => {
+    if(event.target.innerText == element.name)
+    selectedCategoryID = element.id;
+});
+  
+   
   checkSelection();
-  console.log(selectedCategory);
   //allCategoryElements erst in der Funktion initialisiert, da via Async Await fetched und generiert
   let allCategoryElements=document.querySelectorAll(".categoryPara")
   
@@ -57,17 +98,36 @@ function handleTouchCategory(event){
   
   
 };
+async function sendParameters(url){
+  
+  const response = await fetch(url)
+  let triviaData = await response.json();
+  return triviaData;
+}
+
+
 
 // Function for Apply Button Event 
-function handleApplyButton(event){
-if(allOptionSelected== true) {
-  console.log("true")
+async function handleApplyButton(event){
+if(allOptionSelected == true) {
+  url = `http://127.0.0.1:5000/submit?selectedCategoryID=${selectedCategoryID}&selectedDifficult=${selectedDifficult}`;
+  let triviaData = await sendParameters(url);
+  triviaData.results.forEach(element => {
+    let contentBox = document.createElement("div")
+    contentBox.classList.add("contentBox")
+    contentArea.appendChild(contentBox)
+    
+  });
+ 
+  return triviaData;
+
 }
 
 }
 
 function handleDifficultButton(event) {
-  selectedDifficult = event.target.innerText;
+  // Lower case necessary for Get rquest requirment(only lowerCase parameters)
+  selectedDifficult = event.target.innerText.toLowerCase();
   checkSelection();
   console.log(selectedDifficult);
 
@@ -87,56 +147,16 @@ function handleDifficultButton(event) {
 
 
 
-// for (let i=0; i<contentArray.length; i++){
-// let contentBox = document.createElement("div")
-// contentBox.classList.add("contentBox")
-// contentArea.appendChild(contentBox)
-// console.log(i)
-
-// }
-
-// URL API TRIVIA CATEGORIES
-let url = "http://127.0.0.1:5000/categories";
 
 
-// Async Function fetching Categories with embedded append in DOM and event listener handleTouchCategory
-async function autoFetch(url){
-
-const response = await fetch(url);
-let fetchedData = await response.json();
-return fetchedData
-
-}
-
-// async function appendOptions HOF using autofetch for async await fetch of API DATA. Data used to generate Category Divs and append them to DOM with Event Listener
-
-async function appendOptions(url){
-let receivedData = await autoFetch(url)
-receivedData.categories.forEach(element => {
-let categoryBox = document.createElement("div")
-categoryBox.classList.add("categoryBox")
-categoryBox.addEventListener("touchstart",handleTouchCategory)
-let categoryPara = document.createElement("p")
-categoryPara.classList.add("categoryPara")
-categoryPara.innerText = element
-categoryBox.append(categoryPara)
-selectionBox.appendChild(categoryBox)
-console.log(element)
-});
-   
-  
-  }
-
-appendOptions(url)
 
 //Function 
 
 
 function checkSelection(){
-if(selectedCategory!=="" && selectedDifficult!==""){
+if(selectedCategoryID!=="" && selectedDifficult!==""){
   allOptionSelected = true;
   applyButton.classList.add("applyButtonEnabled")
-  console.log("all selected")
+  console.log(selectedCategoryID,selectedDifficult)
 }
-
 }

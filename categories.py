@@ -12,10 +12,7 @@ def getCategoryData():
     response = requests.request("GET", url, headers=headers, data=payload)
     data = response.json()
 
-
-    category_names =[]
-    for category in data['trivia_categories']:
-        category_names.append(category['name'])
    
-    return {'categories': category_names}
+   
+    return data
 print(getCategoryData())
