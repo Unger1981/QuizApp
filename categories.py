@@ -15,4 +15,3 @@ def getCategoryData():
    
    
     return data
-print(getCategoryData())

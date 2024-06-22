@@ -7,6 +7,7 @@ let selectedCategoryID;
 let selectedDifficult ="";
 let allOptionSelected = false;
 let fetchedData;
+let questionAnswerArray =[];
 
 // //DOM Registration
 
@@ -29,7 +30,6 @@ async function autoFetch(){
 let url = "http://127.0.0.1:5000/categories";
 const response = await fetch(url);
 fetchedData = await response.json();
-console.log(fetchedData)
 return fetchedData
 };
 
@@ -46,7 +46,6 @@ categoryPara.classList.add("categoryPara")
 categoryPara.innerText = element.name
 categoryBox.append(categoryPara)
 selectionBox.appendChild(categoryBox)
-console.log(element)
 });
    
   
@@ -79,8 +78,6 @@ function handleTouchCategory(event){
     if(event.target.innerText == element.name)
     selectedCategoryID = element.id;
 });
-  
-   
   checkSelection();
   //allCategoryElements erst in der Funktion initialisiert, da via Async Await fetched und generiert
   let allCategoryElements=document.querySelectorAll(".categoryPara")
@@ -95,9 +92,22 @@ function handleTouchCategory(event){
   });
 
   event.target.classList.add("categoryParaSelected")
-  
-  
 };
+
+function handleTouchAnswer(event){
+  questionAnswerArray.forEach(element => {
+    if(element.correct_answer == event.target.innerHTML){
+      event.target.classList.add("answerParaRight")
+    }else{
+     if(element.correct_answer != event.target.innerHTML ){
+      event.target.classList.add("answerParaWrong")
+     }
+    }
+
+  }
+  )
+  }
+
 async function sendParameters(url){
   
   const response = await fetch(url)
@@ -113,13 +123,39 @@ if(allOptionSelected == true) {
   url = `http://127.0.0.1:5000/submit?selectedCategoryID=${selectedCategoryID}&selectedDifficult=${selectedDifficult}`;
   let triviaData = await sendParameters(url);
   triviaData.results.forEach(element => {
+    let singleQuestionAnswer = {
+      question:element.question,
+      correct_answer:element.correct_answer,
+      incorrect_answers:element.incorrect_answers
+    };
+    questionAnswerArray.push(singleQuestionAnswer)
+    
     let contentBox = document.createElement("div")
     contentBox.classList.add("contentBox")
     contentArea.appendChild(contentBox)
-    
+    let questionPara = document.createElement("p")
+    questionPara.classList.add("questionPara")
+    questionPara.innerHTML = element.question;
+    contentBox.appendChild(questionPara)
+    navBar.classList.remove("navBarActive");
+    let mixedAnswers = []
+    element.incorrect_answers.forEach(element => {
+      mixedAnswers.push(element)
+    });
+    mixedAnswers.push(element.correct_answer)
+    mixedAnswers=shuffleArray(mixedAnswers)
+    mixedAnswers.forEach(element => {
+    let answerPara = document.createElement("p")
+    answerPara.classList.add("answerPara")
+    answerPara.addEventListener("touchstart", handleTouchAnswer)
+    answerPara.innerHTML = element; 
+    contentBox.appendChild(answerPara)
+
+    });
+
   });
  
-  return triviaData;
+  return questionAnswerArray ;
 
 }
 
@@ -159,4 +195,13 @@ if(selectedCategoryID!=="" && selectedDifficult!==""){
   applyButton.classList.add("applyButtonEnabled")
   console.log(selectedCategoryID,selectedDifficult)
 }
+}
+
+// Function to shuffle an array
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
 }

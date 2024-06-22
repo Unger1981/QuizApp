@@ -24,9 +24,9 @@ main {
 }
 
 .contentArea {
-  height: 80vh;
+  height: 80vh; 
   width: 100vw;
-  background-color: beige;
+  background-color:oldlace;
   overflow-y: auto; /* Changed to 'auto' for better usability */
 }
 
@@ -99,10 +99,30 @@ main {
 }
 
 .contentBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
   margin: 15vw;
   width: 70vw;
   height: 70vw;
-  background-color: black;
+  background-color: blanchedalmond;
+
+}
+
+.questionPara{
+  font-size: large;
+  text-shadow: 1pt 1pt orange ;
+}
+
+.answerPara{
+ font-size: medium;
+}
+.answerParaWrong{
+  color:red;
+}
+
+.answerParaRight{
+  color:green;
 }
 
 footer {
